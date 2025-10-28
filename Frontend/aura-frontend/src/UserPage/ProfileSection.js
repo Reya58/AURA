@@ -26,7 +26,7 @@ const ProfileSection = () => {
     }
     const fetchProfile = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/user/diseases?email=${encodeURIComponent(email)}`, {
+        const response = await fetch(`https://aura-pz3yexz22-shreyas-projects-f842d25f.vercel.app/api/user/diseases?email=${encodeURIComponent(email)}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`, // If using token
@@ -84,7 +84,7 @@ const ProfileSection = () => {
     setSaveLoading(true);
     setSaveMessage('');
     try {
-      const response = await fetch('http://localhost:5000/api/user/update', { // Replace with your update endpoint
+      const response = await fetch('https://aura-pz3yexz22-shreyas-projects-f842d25f.vercel.app/api/user/update', { // Replace with your update endpoint
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -111,7 +111,7 @@ const ProfileSection = () => {
   };
   const Changes = async() => {
      try{
-        const response = await fetch('http://localhost:5000/api/user/update', { // Replace with your update endpoint
+        const response = await fetch('https://aura-pz3yexz22-shreyas-projects-f842d25f.vercel.app/api/user/update', { // Replace with your update endpoint
         method: 'PUT',
 
         headers: {

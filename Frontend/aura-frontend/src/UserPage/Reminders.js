@@ -23,7 +23,7 @@ const Reminder = () => {
     const fetchReminders = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/user/fetch-reminders?email=${encodeURIComponent(email)}`,
+          `https://aura-pz3yexz22-shreyas-projects-f842d25f.vercel.app/api/user/fetch-reminders?email=${encodeURIComponent(email)}`,
           { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
         );
         const data = await res.json();
@@ -85,7 +85,7 @@ const Reminder = () => {
   // Mark slot as done
   const markAsDone = async (reminder) => {
     try {
-      const res = await fetch('http://localhost:5000/api/user/update-reminder-status', {
+      const res = await fetch('https://aura-pz3yexz22-shreyas-projects-f842d25f.vercel.app/api/user/update-reminder-status', {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
