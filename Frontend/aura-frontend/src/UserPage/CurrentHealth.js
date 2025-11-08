@@ -28,7 +28,7 @@ const HealthDataDisplay = () => {
         }
 
         // Replace with your actual API endpoint, including email in query params
-        const response = await axios.get(`http://localhost:5000/api/user/latest-health-data?email=${encodeURIComponent(email)}`, {
+        const response = await axios.get(`https://aura-pz3yexz22-shreyas-projects-f842d25f.vercel.app/api/user/latest-health-data?email=${encodeURIComponent(email)}`, {
           headers: {
             Authorization: `Bearer ${token}` // Add token to Authorization header
           }
