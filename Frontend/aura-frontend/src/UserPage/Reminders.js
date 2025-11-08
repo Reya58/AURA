@@ -80,7 +80,7 @@ const Reminder = () => {
 
     setCurrentReminders(current);
     setUpcomingReminders(upcoming);
-  }, [reminders]);
+  }, [reminders, timingSlots, slotOrder]);
 
   // Mark slot as done
   const markAsDone = async (reminder) => {
