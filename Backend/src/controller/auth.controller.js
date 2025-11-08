@@ -15,17 +15,16 @@ export const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = new User({
-      name,
-      email,
-      password: hashedPassword,
-      // other fields can be empty initially
-      age: null,
-      gender: null,
-      diseaseSummary: '',
-      medicationList: [],
-      assignedDoctor: {},
-    });
+  const user = new User({
+  name,
+  email,
+  password: hashedPassword,
+  age: null,
+  gender: null,
+  diseases: [],
+  latest: {} // will use default values from latestSchema
+});
+
 
     await user.save();
     res.status(201).json({ message: 'User registered successfully' });

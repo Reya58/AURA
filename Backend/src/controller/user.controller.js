@@ -146,3 +146,16 @@ export const updatemedications = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+export const Latest=async(req,res)=>{
+  try{
+    const {email}=req.query;
+    const patient=await Patient.findOne({email});
+    if(!patient) return res.status(404).json({message:"Patient not found"});
+    const latestData=patient.latest;
+    res.status(200).json({latest:latestData});
+  }
+  catch(err){
+    res.status(500).json({message:err.message});
+  }
+}

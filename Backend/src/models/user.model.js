@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 
-
-
 const medicationSchema = new mongoose.Schema({
   name: { type: String, required: true },
   dose: { type: String, required: true },
@@ -24,16 +22,23 @@ const diseaseSchema = new mongoose.Schema({
   status: { type: String, default: 'ongoing' },
 });
 
+const latestSchema = new mongoose.Schema({
+  ECG: { type: Number},
+  BPM: { type: Number},
+  TEMP: { type: Number},
+  STATUS: { type: String},
+  timestamp: { type: Date},
+}); 
+
 const patientSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  diseases: [diseaseSchema],
-  password:{type:String,required:true},
+  password: { type: String, required: true },
+  age: { type: Number },
   gender: { type: String },
-  age: { type: Number }
+  diseases: [diseaseSchema],
+  latest:latestSchema// single object with default
 });
-
-
 
 
 const Patient = mongoose.model('Patient', patientSchema);

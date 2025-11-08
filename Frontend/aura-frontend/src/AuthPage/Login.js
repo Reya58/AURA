@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext'; // Import the custom hook
 import './Login.css';
+import echoLogo from "./ECHO_LOGO.png"; // Example logo import
 
 const Login = () => {
   const [email, setEmailInput] = useState(''); // Local state for the email input
@@ -44,7 +45,7 @@ const Login = () => {
     <div className="login-container">
       <div className="login-card">
         <img
-          src="https://media.giphy.com/media/3o7TKz9bX9v9Kz9b9K/giphy.gif" // Example beating heart GIF (replace with your own)
+          src={echoLogo} // Example beating heart GIF (replace with your own)
           alt="Health App Logo"
           className="logo"
         />

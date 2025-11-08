@@ -132,8 +132,81 @@ const ProfileSection = () => {
 
   }
 
-  if (loading) return <div className="profile-content"><p>Loading profile...</p></div>;
-  if (error) return <div className="profile-content"><p className="error">{error}</p></div>;
+if (loading) {
+  return (
+    <div className="loading-container">
+      <div className="spinner"></div>
+      <p>Loading your profile</p>
+
+      <style jsx>{`
+        .loading-container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          height: 60vh;
+          text-align: center;
+          color: #555;
+          font-size: 18px;
+        }
+
+        .spinner {
+          width: 45px;
+          height: 45px;
+          border: 4px solid #d0d7e2;
+          border-top-color: #007bff;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+          margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+  
+
+ if (error) {
+  return (
+    <div className="error-container">
+      <div className="error-icon">⚠️</div>
+      <p>{error}</p>
+
+      <style jsx>{`
+        .error-container {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          height: 60vh;
+          text-align: center;
+          color: #d9534f;
+          font-size: 18px;
+          padding: 0 20px;
+        }
+
+        .error-icon {
+          font-size: 45px;
+          margin-bottom: 10px;
+          animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.15); }
+          100% { transform: scale(1); }
+        }
+      `}</style>
+    </div>
+  );
+}
+
     console.log('Rendering profile with data:', profileData.photo);
   return (
     <div className="profile-content">

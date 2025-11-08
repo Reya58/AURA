@@ -10,20 +10,26 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 280px; /* Slightly wider for elegance */
+  width: 280px;
   height: 100vh;
   background: #ffffff;
   padding: 2rem 1.5rem;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 1px 8px rgba(0, 0, 0, 0.1); /* Layered shadows for depth */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 1px 8px rgba(0, 0, 0, 0.1);
   border-radius: 0 15px 15px 0;
   z-index: 1000;
-  transform: translateX(-100%); /* Hidden by default on mobile */
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Smooth, classy transition */
+  transform: translateX(-100%);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* ✅ Make sidebar a vertical flex box */
+  display: flex;
+  flex-direction: column;
 }
+
 
 .sidebar.open {
   transform: translateX(0); /* Show when open */
 }
+
 
 .sidebar-header {
   display: flex;
@@ -615,6 +621,11 @@
   cursor: pointer;
   font-size: 14px;
 }
+.dashboard-logo {
+  height: 45px;
+  margin-left: 10px;
+}
+
 
 .submit-btn {
   background: #007bff;
@@ -624,4 +635,274 @@
 .cancel-btn {
   background: #6c757d;
   color: white;
+}
+.sidebar-footer {
+  margin-top: auto;
+  padding: 15px;
+  border-top: 1px solid #ddd;
+  text-align: center;
+}
+
+.logout-btn {
+  width: 100%;
+  background: #ff4d4d;
+  border: none;
+  padding: 10px;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background: #e60000;
+}
+
+
+/* -------------------- RESPONSIVE DESIGN -------------------- */
+
+/* Tablets and medium screens */
+@media (max-width: 992px) {
+  .main-content {
+    margin-left: 0;
+    border-radius: 10px;
+  }
+
+  .profile-card {
+    padding: 1.5rem;
+    gap: 2rem;
+  }
+
+  .profile-photo {
+    width: 130px;
+    height: 130px;
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 768px) {
+  /* Sidebar collapses and opens via hamburger */
+  .sidebar {
+    width: 240px;
+    transform: translateX(-100%);
+    border-radius: 0;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 1rem;
+  }
+
+  .main-header {
+    padding: 1rem 1.5rem;
+  }
+
+  .profile-content {
+    padding: 1.2rem;
+  }
+
+  .profile-card {
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-fields {
+    width: 100%;
+  }
+
+  .profile-photo {
+    width: 120px;
+    height: 120px;
+  }
+
+  .field-group input,
+  .field-group select {
+    font-size: 0.95rem;
+    padding: 0.8rem;
+  }
+
+  .save-btn {
+    font-size: 1rem;
+    padding: 0.9rem;
+  }
+}
+
+/* Small mobile screens */
+@media (max-width: 480px) {
+  .profile-photo {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-card {
+    padding: 1rem;
+  }
+
+  .profile-content h3 {
+    font-size: 1.3rem;
+  }
+
+  .sidebar {
+    width: 210px;
+  }
+}
+
+/* Reminder & Disease Cards Grid Responsive */
+
+/* -------- SIDEBAR CORE -------- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background: #ffffff;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 1px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 0 15px 15px 0;
+  z-index: 1000;
+  transform: translateX(-100%);
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* ✅ Make sidebar a vertical column */
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+/* -------- HEADER -------- */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid #e0f2f1;
+  padding-bottom: 1rem;
+}
+
+.sidebar h2 {
+  color: #26a69a;
+  font-weight: 700;
+  font-size: 1.4rem;
+  letter-spacing: 0.5px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #546e7a;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.close-btn:hover {
+  color: #e57373;
+  transform: scale(1.1);
+}
+
+/* -------- NAVIGATION LIST (SCROLLABLE) -------- */
+.sidebar nav {
+  flex: 1; /* ✅ Take remaining height */
+  overflow-y: auto; /* ✅ Scroll when height small */
+  padding-right: 6px;
+}
+
+.sidebar nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar nav li {
+  padding: 1.2rem 1rem;
+  cursor: pointer;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  transition: background 0.3s ease, transform 0.2s ease;
+  font-weight: 500;
+}
+
+.sidebar nav li:hover {
+  background: #e0f2f1;
+  transform: translateX(5px);
+}
+
+.sidebar nav li.active {
+  background: linear-gradient(135deg, #26a69a 0%, #4db6ac 100%);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(38, 166, 154, 0.3);
+}
+
+/* ✅ Smooth scrollbar */
+.sidebar nav::-webkit-scrollbar {
+  width: 6px;
+}
+.sidebar nav::-webkit-scrollbar-thumb {
+  background: #cfd8dc;
+  border-radius: 10px;
+}
+
+/* -------- LOGOUT FIX (STICKY FOOTER) -------- */
+.sidebar-footer {
+  margin-top: auto;
+  padding: 15px 0;
+  border-top: 1px solid #ddd;
+  background: white;
+  position: sticky;
+  bottom: 0; /* ✅ Always stays in view */
+  z-index: 10;
+  text-align: center;
+}
+
+.logout-btn {
+  width: 100%;
+  background: #ff4d4d;
+  border: none;
+  padding: 10px;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.logout-btn:hover {
+  background: #e60000;
+}
+
+/* Overlay for sidebar on mobile */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+
+/* -------- RESPONSIVE -------- */
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 240px;
+    border-radius: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 210px;
+  }
 }

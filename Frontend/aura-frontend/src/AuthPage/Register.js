@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Login.css'; // Reuse the same CSS for consistency (or create a separate Register.css)
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext'; 
-
+import echoLogo from "./ECHO_LOGO.png"; // Same logo (replace with your own)
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -36,7 +36,7 @@ const navigate = useNavigate();
     console.log('Registering with:', formData);
      // Simulate API call (replace with real fetch to your backend)
     try {
-      const response = await fetch('https://aura-pz3yexz22-shreyas-projects-f842d25f.vercel.app/api/auth/register', { // Example endpoint
+      const response = await fetch('http://localhost:5000/api/auth/register', { // Example endpoint
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({email:formData.email,password:formData.password,name:formData.name}),
@@ -58,7 +58,7 @@ const navigate = useNavigate();
     <div className="login-container"> {/* Reuse container class */}
       <div className="login-card"> {/* Reuse card class */}
         <img
-          src="https://media.giphy.com/media/3o7TKz9bX9v9Kz9b9K/giphy.gif" // Same logo (replace with your own)
+          src={echoLogo} // Same logo (replace with your own)
           alt="Health App Logo"
           className="logo"
         />
