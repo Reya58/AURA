@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../AuthContext"; // Assuming you have AuthContext for email
 
-const MedicationFetcher = ({ apiBaseUrl = "https://aura-pz3yexz22-shreyas-projects-f842d25f.vercel.app" }) => {
+const MedicationFetcher = ({ apiBaseUrl = "https://aura-git-main-shreyas-projects-f842d25f.vercel.app" }) => {
   const { email } = useAuth(); 
   const [medications, setMedications] = useState([]);
   const [loading, setLoading] = useState(true);

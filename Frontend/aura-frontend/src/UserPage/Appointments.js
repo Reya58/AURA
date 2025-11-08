@@ -120,7 +120,7 @@ const Appointment = () => {
     const fetchPatientDetails = async () => {
       try {
         const response = await fetch(
-          `https://aura-pz3yexz22-shreyas-projects-f842d25f.vercel.app/api/user/diseases?email=${encodeURIComponent(email)}`,
+          `https://aura-git-main-shreyas-projects-f842d25f.vercel.app/api/user/diseases?email=${encodeURIComponent(email)}`,
           {
             method: 'GET',
             headers: {

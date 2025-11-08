@@ -20,7 +20,7 @@ const Login = () => {
 
     // Simulate API call (replace with real fetch to your backend)
     try {
-      const response = await fetch('https://aura-pz3yexz22-shreyas-projects-f842d25f.vercel.app/api/auth/login', { // Example endpoint
+      const response = await fetch('https://aura-git-main-shreyas-projects-f842d25f.vercel.app/api/auth/login', { // Example endpoint
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

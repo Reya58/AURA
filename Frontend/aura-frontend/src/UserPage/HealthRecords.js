@@ -30,7 +30,7 @@ const Diseases = () => {
     const fetchDiseases = async () => {
       try {
         const response = await fetch(
-          `https://aura-pz3yexz22-shreyas-projects-f842d25f.vercel.app/api/user/diseases?email=${encodeURIComponent(email)}`,
+          `https://aura-git-main-shreyas-projects-f842d25f.vercel.app/api/user/diseases?email=${encodeURIComponent(email)}`,
           {
             method: 'GET',
             headers: {
@@ -102,7 +102,7 @@ const Diseases = () => {
     }
 
     try {
-      const response = await fetch(`https://aura-pz3yexz22-shreyas-projects-f842d25f.vercel.app/api/user/update-patient`, {
+      const response = await fetch(`https://aura-git-main-shreyas-projects-f842d25f.vercel.app/api/user/update-patient`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -114,7 +114,7 @@ const Diseases = () => {
       if (!response.ok) throw new Error('Failed to add disease');
 
       const fetchResponse = await fetch(
-        `https://aura-pz3yexz22-shreyas-projects-f842d25f.vercel.app/api/user/diseases?email=${encodeURIComponent(email)}`,
+        `https://aura-git-main-shreyas-projects-f842d25f.vercel.app/api/user/diseases?email=${encodeURIComponent(email)}`,
         {
           method: 'GET',
           headers: {
@@ -146,7 +146,7 @@ const Diseases = () => {
   // ✅ Update Disease Status
   const handleStatusChange = async (diseaseId, newStatus) => {
     try {
-      const response = await fetch(`https://aura-pz3yexz22-shreyas-projects-f842d25f.vercel.app/api/user/update-med-status`, {
+      const response = await fetch(`https://aura-git-main-shreyas-projects-f842d25f.vercel.app/api/user/update-med-status`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -158,7 +158,7 @@ const Diseases = () => {
       if (!response.ok) throw new Error('Failed to update disease status');
 
       const fetchResponse = await fetch(
-        `https://aura-pz3yexz22-shreyas-projects-f842d25f.vercel.app/api/user/diseases?email=${encodeURIComponent(email)}`,
+        `https://aura-git-main-shreyas-projects-f842d25f.vercel.app/api/user/diseases?email=${encodeURIComponent(email)}`,
         {
           method: 'GET',
           headers: {
