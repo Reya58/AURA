@@ -66,14 +66,7 @@ const ProfileSection = () => {
     setProfileData({ ...profileData, [name]: value });
   };
 
-  const handlePhotoChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => setProfileData({ ...profileData, photo: reader.result });
-      reader.readAsDataURL(file);
-    }
-  };
+
 
   const handleEditClick = (field) => {
     setEditingField(field); // Enable editing for the specific field

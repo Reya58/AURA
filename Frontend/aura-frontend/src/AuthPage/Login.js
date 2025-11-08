@@ -76,7 +76,7 @@ const Login = () => {
           {error && <p className="error">{error}</p>}
           <button type="submit" className="login-btn">Login</button>
         </form>
-        <p className="forgot-password">Forgot password? <a href="#">Reset here</a></p>
+        <p className="forgot-password">Forgot password? <a href="/login">Reset here</a></p>
         <p className="toggle-mode">New user? <a href="/register">Register here</a></p>
       </div>
     </div>
