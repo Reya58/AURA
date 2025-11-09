@@ -10,7 +10,7 @@ import Patient from './src/models/Patient.js';
 const app = express();
 
 app.use(cors({
-  origin: "https://aurafrontend.vercel.app",
+  origin: "https://aurafrontend-p577yi3cs-shreyas-projects-f842d25f.vercel.app",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
