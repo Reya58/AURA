@@ -8,7 +8,14 @@ import cron from "node-cron";
 import Patient from './src/models/Patient.js';
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "https://aurafrontend.vercel.app", // your frontend domain
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
+app.use(express.json());
+
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
