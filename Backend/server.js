@@ -8,18 +8,18 @@ import cron from "node-cron";
 import Patient from './src/models/Patient.js';
 
 const app = express();
-
 app.use(cors());
-
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 
+const PORT = process.env.PORT || 5000;
 connectDB();
 
-// CRON job runs every midnight
 
 
 
-export default app;
+
+
+app.listen(PORT, () => console.log(`🔥 Server running on port ${PORT}`));
