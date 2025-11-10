@@ -22,7 +22,18 @@ app.get('/', (req, res) => {
 });
 
 // Inside server.js
-
+app.get("/api/cron/run", async (req, res) => {
+  try {
+    // Your cron logic
+    await Patient.updateMany(
+      {},
+      { $set: { "diseases.$[].medications.$[].timing.$[].status": "pending" } }
+    );
+    return res.status(200).json({ message: "Cron triggered!" });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
 
 
 app.use('/api/auth', authRoutes);
