@@ -5,7 +5,7 @@ import connectDB from './src/config/db.js';
 import authRoutes from './src/routes/auth.routes.js';
 import userRoutes from './src/routes/user.routes.js';
 import cron from "node-cron";
-
+import Patient from './src/models/user.model.js';
 
 const app = express();
 app.use(cors({
