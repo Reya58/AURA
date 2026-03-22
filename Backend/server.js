@@ -12,7 +12,8 @@ const app = express();
 app.use(cors({
   origin: function (origin, callback) {
     console.log('Incoming request origin:', origin); // ✅ logs every request origin
-    if (!origin || origin === 'http://localhost:3000') {
+    const allowedOrigins = ['http://localhost:3000', 'https://aurafrontend.vercel.app'];
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true); // allow this origin
     } else {
       callback(new Error('CORS not allowed')); // block other origins
