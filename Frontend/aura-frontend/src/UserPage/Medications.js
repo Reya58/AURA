@@ -227,7 +227,7 @@ const PillIcon = ({ color = '#1a6b4a' }) => (
   </svg>
 );
 
-const MedicationFetcher = ({ apiBaseUrl = "http://localhost:5000" }) => {
+const MedicationFetcher = ({ apiBaseUrl = "https://aura-wo8f.vercel.app" }) => {
   const { email } = useAuth();
   const [medications, setMedications] = useState([]);
   const [loading, setLoading]         = useState(true);

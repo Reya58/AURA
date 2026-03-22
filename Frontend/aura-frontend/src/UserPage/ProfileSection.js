@@ -336,7 +336,7 @@ const ProfileSection = () => {
     if (!email) { setError('Email not found. Please log in again.'); setLoading(false); return; }
     const fetchProfile = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/user/diseases?email=${encodeURIComponent(email)}`, {
+        const res = await fetch(`https://aura-wo8f.vercel.app/api/user/diseases?email=${encodeURIComponent(email)}`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' },
         });
         if (!res.ok) throw new Error();
@@ -372,7 +372,7 @@ const ProfileSection = () => {
   const handleSave = async () => {
     setSaveLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/user/update', {
+      const res = await fetch('https://aura-wo8f.vercel.app/api/user/update', {
         method: 'PUT',
         headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, name: profileData.name, age: profileData.age, gender: profileData.gender, photo: profileData.photo }),

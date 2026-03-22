@@ -341,7 +341,7 @@ const HealthDataDisplay = () => {
     if (isRefresh) setRefreshing(true);
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/user/latest-health-data?email=${encodeURIComponent(email)}`,
+        `https://aura-wo8f.vercel.app/api/user/latest-health-data?email=${encodeURIComponent(email)}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setData(res.data.latest);

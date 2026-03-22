@@ -444,7 +444,7 @@ const Diseases = () => {
   const fetchDiseases = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/user/diseases?email=${encodeURIComponent(email)}`,
+        `https://aura-wo8f.vercel.app/api/user/diseases?email=${encodeURIComponent(email)}`,
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' } }
       );
       if (!res.ok) throw new Error();
@@ -480,7 +480,7 @@ const Diseases = () => {
     if (!newDisease.name || !newDisease.summary) return;
     setSubmitting(true);
     try {
-      const res = await fetch('http://localhost:5000/api/user/update-patient', {
+      const res = await fetch('https://aura-wo8f.vercel.app/api/user/update-patient', {
         method: 'POST',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ disease: newDisease, email }),
@@ -495,7 +495,7 @@ const Diseases = () => {
 
   const handleStatusChange = async (diseaseId, newStatus) => {
     try {
-      await fetch('http://localhost:5000/api/user/update-med-status', {
+      await fetch('https://aura-wo8f.vercel.app/api/user/update-med-status', {
         method: 'PUT',
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus, email, diseaseId }),

@@ -402,7 +402,7 @@ const Reminder = () => {
     if (!email) return;
     try {
       const res = await fetch(
-        `http://localhost:5000/api/user/fetch-reminders?email=${encodeURIComponent(email)}`,
+        `https://aura-wo8f.vercel.app/api/user/fetch-reminders?email=${encodeURIComponent(email)}`,
         { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
       );
       const data = await res.json();
@@ -442,7 +442,7 @@ const Reminder = () => {
   const markAsDone = async (reminder) => {
     setMarking(reminder._id);
     try {
-      const res = await fetch('http://localhost:5000/api/user/update-reminder-status', {
+      const res = await fetch('https://aura-wo8f.vercel.app/api/user/update-reminder-status', {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,

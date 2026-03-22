@@ -261,7 +261,7 @@ const Appointment = () => {
     const fetch_ = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/user/diseases?email=${encodeURIComponent(email)}`,
+          `https://aura-wo8f.vercel.app/api/user/diseases?email=${encodeURIComponent(email)}`,
           { headers: { Authorization:`Bearer ${localStorage.getItem('token')}`, 'Content-Type':'application/json' } }
         );
         if (!res.ok) throw new Error('Failed to fetch appointments');
