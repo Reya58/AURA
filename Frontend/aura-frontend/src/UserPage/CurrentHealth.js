@@ -356,6 +356,11 @@ const useSpeech = () => {
 
 /* ── Main component ── */
 const VoiceAssistant = () => {
+  
+  
+  const voices = speechSynthesis.getVoices();
+  console.log(voices);
+  
   const { email } = useAuth();
 
   const [micState, setMicState]   = useState('idle'); // idle | recording | processing | speaking

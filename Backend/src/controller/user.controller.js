@@ -259,7 +259,6 @@ Respond ONLY in valid JSON:
 };
 
 
-
 export const healthAssistant = async (req, res) => {
   try {
     if (!process.env.GROQ_API_KEY) {
@@ -274,7 +273,6 @@ export const healthAssistant = async (req, res) => {
       });
     }
 
-    // ✅ FETCH PATIENT
     const patient = await Patient.findOne({ email });
 
     if (!patient) {
@@ -283,97 +281,165 @@ export const healthAssistant = async (req, res) => {
       });
     }
 
-    // ✅ Extract diseases
-    const diseases = patient.diseases
-      ?.map((d) => d.name)
-      .join(", ");
+    // ✅ TIME SLOT
+    const hour = new Date().getHours();
+    let currentSlot = "morning";
+    if (hour >= 12 && hour < 17) currentSlot = "afternoon";
+    else if (hour >= 17) currentSlot = "night";
 
-    // ✅ 🔥 EXTRACT MEDICINES FROM NESTED STRUCTURE
+    const slotsOrder = ["morning", "afternoon", "night"];
+    const currentIndex = slotsOrder.indexOf(currentSlot);
+
+    // ✅ Active diseases only
+    const activeDiseases = patient.diseases?.filter(
+      (d) => !["discontinued", "paused"].includes(d.status?.toLowerCase())
+    );
+
+    const diseases =
+      activeDiseases?.map((d) => d.name).join(", ") || "None";
+
+    // ✅ Medicines + Skipped + Missed
     let medicinesList = [];
+    let skippedMeds = [];
+    let currentMeds = [];
+    let missedMeds = [];
 
     patient.diseases?.forEach((disease) => {
+      const isDiseaseInactive = ["discontinued", "paused"].includes(
+        disease.status?.toLowerCase()
+      );
+
       disease.medications?.forEach((med) => {
-        const timings = med.timing
-          ?.map((t) => t.slot)
-          .join(", ");
+        if (!med?.name) return;
+
+        // ❌ skip inactive disease
+        if (isDiseaseInactive) {
+          skippedMeds.push(`${med.name} (via ${disease.name})`);
+          return;
+        }
+
+        // ❌ skip inactive med
+        if (["discontinued", "paused"].includes(med.status?.toLowerCase())) {
+          skippedMeds.push(`${med.name} (${med.status})`);
+          return;
+        }
+
+        const timings = med.timing || [];
+
+        // ✅ FULL LIST
+        const timingStr =
+          timings.map((t) => t.slot).join(", ") || "No timing";
 
         medicinesList.push(
-          `${med.name} (${med.dose}) - ${timings || "No timing"}`
+          `${med.name} (${med.dose || "N/A"}) - ${timingStr}`
         );
+
+        timings.forEach((t) => {
+          const slot = t.slot?.toLowerCase();
+          const slotIndex = slotsOrder.indexOf(slot);
+
+          // ✅ CURRENT MEDS
+          if (slot === currentSlot) {
+            currentMeds.push(`${med.name} (${med.dose || "N/A"})`);
+          }
+
+          // 🔥 MISSED MEDS
+          if (slotIndex !== -1 && slotIndex < currentIndex) {
+            if (t.status !== "done") {
+              missedMeds.push(
+                `${med.name} (${med.dose || "N/A"}) - ${t.slot}`
+              );
+            }
+          }
+        });
       });
     });
 
-    const medicines = medicinesList.join(", ");
+    const medicines =
+      medicinesList.length > 0
+        ? medicinesList.join(", ")
+        : "No medicines available";
 
-    // ✅ 🔥 TIME-BASED LOGIC
-    const hour = new Date().getHours();
+    // ✅ APPOINTMENTS
+    let appointmentsList = [];
 
-    let currentSlot = "Morning";
-    if (hour >= 12 && hour < 17) currentSlot = "Afternoon";
-    else if (hour >= 17) currentSlot = "Night";
+    activeDiseases?.forEach((disease) => {
+      if (disease.nextAppointment) {
+        const apptDate = new Date(disease.nextAppointment);
 
-    // ✅ Find medicines for current time
-    let currentMeds = [];
-
-    patient.diseases?.forEach((disease) => {
-      disease.medications?.forEach((med) => {
-        const match = med.timing?.some(
-          (t) => t.slot.toLowerCase() === currentSlot.toLowerCase()
-        );
-
-        if (match) {
-          currentMeds.push(`${med.name} (${med.dose})`);
+        if (!isNaN(apptDate.getTime()) && apptDate > new Date()) {
+          appointmentsList.push(
+            `${disease.name} | Dr: ${
+              disease.assignedDoctor || "N/A"
+            } | ${apptDate.toLocaleString("en-IN")}`
+          );
         }
-      });
+      }
     });
 
-    // ✅ Build context
-    let context = `
+    const appointments =
+      appointmentsList.length > 0
+        ? appointmentsList.join("\n")
+        : "No upcoming appointments";
+
+    // ✅ CONTEXT (NEW FIELD ADDED)
+    const context = `
 Patient Info:
+- Name: ${patient.name || "N/A"}
 - Age: ${patient.age || "N/A"}
 - Gender: ${patient.gender || "N/A"}
 
-- Diseases:
-  ${diseases || "None"}
+Active Diseases:
+${diseases}
 
-- Current Medicines:
-  ${medicines || "No medicines available"}
+All Medicines:
+${medicines}
 
-- Medicines to take NOW (${currentSlot}):
-  ${currentMeds.join(", ") || "None"}
+Medicines to take NOW (${currentSlot}):
+${currentMeds.join(", ") || "None scheduled"}
 
-- Latest Health:
-   • BPM: ${patient.latest?.BPM || "N/A"}
-   • TEMP: ${patient.latest?.TEMP || "N/A"}
-   • ECG: ${patient.latest?.ECG || "N/A"}
-   • STATUS: ${patient.latest?.STATUS || "N/A"}
-`;
+⚠️ Missed Medicines:
+${missedMeds.join(", ") || "None"}
 
-    // ✅ Prompt
+Discontinued/Paused Medicines:
+${skippedMeds.join(", ") || "None"}
+
+Upcoming Appointments:
+${appointments}
+
+Latest Health:
+- BPM: ${patient.latest?.BPM ?? "N/A"}
+- TEMP: ${patient.latest?.TEMP ?? "N/A"}
+- ECG: ${patient.latest?.ECG ?? "N/A"}
+- STATUS: ${patient.latest?.STATUS ?? "N/A"}
+`.trim();
+
+    // ✅ PROMPT
     const finalPrompt = `
 You are a personal AI health assistant.
 
 STRICT RULES:
-- ALWAYS use the patient data provided
-- NEVER say you don’t have access
-- If medicines exist → answer from them
-- If user asks "now" → use the provided "Medicines to take NOW"
-- If no medicines → say "No medicines scheduled"
+- Use ONLY the data provided
+- NEVER include discontinued/paused medicines
+- If user asks "now" → use current medicines
+- If user asks about missed → use "Missed Medicines"
+- If none exist → clearly say so
+- Be precise and helpful
+-If user asks about paused/discontinued give ignored med list
 
 ${context}
 
-User Question:
-${prompt}
+User Question: ${prompt}
 
 Respond ONLY in JSON:
 {
-  "reply": "answer clearly",
+  "reply": "clear answer",
   "severity": "low | medium | high",
   "advice": "next step"
 }
-`;
+`.trim();
 
-    // ✅ Groq API call
+    // ✅ GROQ CALL
     const groqResponse = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
       {
@@ -385,7 +451,7 @@ Respond ONLY in JSON:
         body: JSON.stringify({
           model: "llama-3.3-70b-versatile",
           messages: [{ role: "user", content: finalPrompt }],
-          temperature: 0.2,
+          temperature: 0.1,
         }),
       }
     );
@@ -417,7 +483,7 @@ Respond ONLY in JSON:
     res.status(200).json({ response: result });
 
   } catch (err) {
-    console.error(err);
+    console.error("healthAssistant error:", err);
     res.status(500).json({ message: err.message });
   }
 };
