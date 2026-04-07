@@ -13,4 +13,5 @@ router.put('/update', authMiddleware, userCtrl.updateProfile);
 router.put('/update-med-status', authMiddleware, userCtrl.updatemedications);
 router.get('/latest-health-data',authMiddleware,userCtrl.Latest);
 router.post('/verify', authMiddleware, userCtrl.verifyMedications);
+router.post('/health',authMiddleware,userCtrl.healthAssistant);
 export default router;

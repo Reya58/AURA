@@ -8,7 +8,7 @@ import Appointments from './Appointments';
 import HealthRecords from './HealthRecords';
 import EmergencySOS from './EmergencySOS';
 import Health from './CurrentHealth';
-// import echoLogo from "../AuthPage/ECHO_LOGO.png";
+// import auraLogo from "../AuthPage/AURA_LOGO.png";
 
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap');
@@ -338,7 +338,7 @@ const Dashboard = () => {
           {/* Brand */}
           <div className="db-brand">
             <div className="db-brand-inner">
-              <div className="db-brand-name">ECHO</div>
+              <div className="db-brand-name">AURA</div>
               <div className="db-brand-tag">Health Platform</div>
             </div>
             <button className="db-close-btn" onClick={() => setIsSidebarOpen(false)}>
@@ -406,7 +406,7 @@ const Dashboard = () => {
             <div className="db-topbar-title">{SECTION_LABELS[activeSection]}</div>
 
             <div className="db-topbar-right">
-              {/* Uncomment to show logo: <img src={echoLogo} alt="Echo" className="db-topbar-logo" /> */}
+              {/* Uncomment to show logo: <img src={auraLogo} alt="Aura" className="db-topbar-logo" /> */}
               <button className="db-sos-btn" onClick={() => handleNavClick('emergency')}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 SOS
@@ -416,7 +416,7 @@ const Dashboard = () => {
 
           {/* Breadcrumb */}
           <div className="db-breadcrumb">
-            <span>ECHO</span>
+            <span>AURA</span>
             <span className="db-breadcrumb-sep">›</span>
             <span className="db-breadcrumb-cur">{SECTION_LABELS[activeSection]}</span>
           </div>

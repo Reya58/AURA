@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import { useAuth } from '../AuthContext';
 
@@ -13,6 +13,9 @@ const styles = `
     background: #f0f7f4;
     padding: 40px 28px;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .hd-blob {
@@ -31,7 +34,7 @@ const styles = `
 
   .hd-inner {
     position: relative; z-index: 1;
-    max-width: 900px; margin: 0 auto;
+    width: 100%; max-width: 600px;
     animation: fadeUp 0.55s cubic-bezier(0.22,1,0.36,1) both;
   }
   @keyframes fadeUp {
@@ -41,8 +44,8 @@ const styles = `
 
   /* ── Page header ── */
   .hd-page-header {
-    display: flex; align-items: flex-end; justify-content: space-between;
-    margin-bottom: 32px; gap: 16px; flex-wrap: wrap;
+    text-align: center;
+    margin-bottom: 28px;
   }
   .hd-page-label {
     font-size: 11px; font-weight: 500; color: #1a6b4a;
@@ -50,468 +53,585 @@ const styles = `
   }
   .hd-page-title {
     font-family: 'Playfair Display', serif;
-    font-size: 32px; font-weight: 600;
+    font-size: 30px; font-weight: 600;
     color: #0d2e20; letter-spacing: -0.5px;
   }
-  .hd-page-sub { font-size: 14px; color: #7aaa92; margin-top: 4px; }
+  .hd-page-sub { font-size: 14px; color: #7aaa92; margin-top: 6px; }
 
-  /* Live badge */
-  .hd-live-badge {
+  /* ── Voice Assistant Panel ── */
+  .hd-voice-panel {
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.9);
+    border-radius: 28px;
+    box-shadow: 0 8px 48px rgba(10,60,40,0.12);
+    padding: 32px;
+  }
+
+  .hd-voice-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .hd-voice-title {
     display: flex; align-items: center; gap: 8px;
-    padding: 10px 18px; border-radius: 12px;
-    background: rgba(26,107,74,0.08);
-    border: 1px solid rgba(26,107,74,0.15);
-    font-size: 13px; font-weight: 500; color: #1a6b4a;
-    white-space: nowrap;
   }
-  .hd-live-dot {
-    width: 8px; height: 8px; border-radius: 50%; background: #2d9e6e;
-    animation: livePulse 1.8s ease-in-out infinite;
-  }
-  @keyframes livePulse {
-    0%,100% { box-shadow: 0 0 0 0 rgba(45,158,110,0.5); }
-    70%      { box-shadow: 0 0 0 6px transparent; }
-  }
-
-  /* ── Status hero card ── */
-  .hd-hero {
-    border-radius: 24px; overflow: hidden;
-    margin-bottom: 24px;
-    box-shadow: 0 8px 40px rgba(10,60,40,0.12);
-  }
-  .hd-hero-bg {
-    padding: 32px 36px;
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 24px; flex-wrap: wrap;
-  }
-  .hd-hero-bg.normal { background: linear-gradient(135deg,#1a6b4a 0%,#2d9e6e 100%); }
-  .hd-hero-bg.critical { background: linear-gradient(135deg,#a32d2d 0%,#e05252 100%); }
-
-  .hd-hero-left {}
-  .hd-hero-status-label {
-    font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.7);
-    letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;
-  }
-  .hd-hero-status-val {
-    font-family: 'Playfair Display', serif;
-    font-size: 36px; font-weight: 600; color: #fff;
-    letter-spacing: -0.5px; line-height: 1;
-  }
-  .hd-hero-status-sub { font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 6px; }
-
-  .hd-hero-icon {
-    width: 80px; height: 80px; border-radius: 50%;
-    background: rgba(255,255,255,0.15);
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-  }
-  .hd-hero-icon svg { animation: heartbeat 1.4s ease-in-out infinite; }
-  @keyframes heartbeat {
-    0%,100% { transform: scale(1); }
-    14%      { transform: scale(1.18); }
-    28%      { transform: scale(1); }
-    42%      { transform: scale(1.1); }
-    56%      { transform: scale(1); }
-  }
-
-  /* Timestamp strip */
-  .hd-hero-footer {
-    background: rgba(0,0,0,0.15);
-    padding: 12px 36px;
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 8px;
-  }
-  .hd-hero-footer-item {
-    display: flex; align-items: center; gap: 7px;
-    font-size: 12px; color: rgba(255,255,255,0.75); font-weight: 400;
-  }
-  .hd-hero-footer-val { color: #fff; font-weight: 500; }
-
-  /* ── Vitals grid ── */
-  .hd-vitals {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
-  }
-
-  .hd-vital-card {
-    background: rgba(255,255,255,0.85);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255,255,255,0.75);
-    border-radius: 20px; overflow: hidden;
-    box-shadow: 0 4px 20px rgba(10,60,40,0.07);
-    transition: transform 0.18s, box-shadow 0.18s;
-  }
-  .hd-vital-card:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(10,60,40,0.13); }
-
-  .hd-vital-accent { height: 4px; }
-  .hd-vital-accent.ecg  { background: linear-gradient(90deg,#1a6b4a,#2d9e6e); }
-  .hd-vital-accent.bpm  { background: linear-gradient(90deg,#c0392b,#e05252); }
-  .hd-vital-accent.temp { background: linear-gradient(90deg,#b7791f,#f5a623); }
-  .hd-vital-accent.spo2 { background: linear-gradient(90deg,#2b6cb0,#4a90d9); }
-
-  .hd-vital-body { padding: 20px; }
-  .hd-vital-icon {
-    width: 40px; height: 40px; border-radius: 11px;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 14px; flex-shrink: 0;
-  }
-  .hd-vital-icon.ecg  { background: rgba(26,107,74,0.1);  color: #1a6b4a; }
-  .hd-vital-icon.bpm  { background: rgba(192,57,43,0.1);  color: #c0392b; }
-  .hd-vital-icon.temp { background: rgba(183,121,31,0.1); color: #b7791f; }
-  .hd-vital-icon.spo2 { background: rgba(43,108,176,0.1); color: #2b6cb0; }
-
-  .hd-vital-label {
-    font-size: 11px; font-weight: 500; color: #7aaa92;
-    letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;
-  }
-  .hd-vital-val {
-    font-family: 'Playfair Display', serif;
-    font-size: 32px; font-weight: 600; color: #0d2e20;
-    line-height: 1; letter-spacing: -0.5px;
-  }
-  .hd-vital-unit {
-    font-size: 13px; font-weight: 400; color: #7aaa92; margin-left: 4px;
-  }
-  .hd-vital-range {
-    font-size: 11px; color: #a0c4b4; margin-top: 6px;
-  }
-
-  /* ── ECG waveform strip ── */
-  .hd-ecg-strip {
-    background: rgba(255,255,255,0.85);
-    backdrop-filter: blur(16px);
-    border: 1px solid rgba(255,255,255,0.75);
-    border-radius: 20px; overflow: hidden;
-    box-shadow: 0 4px 20px rgba(10,60,40,0.07);
-    margin-bottom: 24px;
-  }
-  .hd-ecg-header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 22px 0; flex-wrap: wrap; gap: 8px;
-  }
-  .hd-ecg-title {
+  .hd-voice-title-label {
     font-size: 11px; font-weight: 500; color: #1a6b4a;
     letter-spacing: 1.8px; text-transform: uppercase;
   }
-  .hd-ecg-val {
-    font-size: 13px; font-weight: 500; color: #0d2e20;
-    background: rgba(26,107,74,0.08); padding: 4px 12px; border-radius: 99px;
-  }
-  .hd-ecg-canvas { display: block; width: 100%; height: 80px; padding: 0 22px 18px; }
 
-  /* ── Refresh button ── */
-  .hd-refresh-btn {
+  /* Speak toggle */
+  .hd-speak-toggle {
     display: flex; align-items: center; gap: 8px;
-    padding: 13px 22px;
+    font-size: 12px; color: #7aaa92; cursor: pointer;
+    user-select: none;
+  }
+  .hd-speak-toggle input { accent-color: #1a6b4a; }
+
+  /* Mic button */
+  .hd-mic-area {
+    display: flex; flex-direction: column; align-items: center; gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .hd-mic-ring {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    width: 100px; height: 100px;
+  }
+
+  .hd-mic-ring-pulse {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .hd-mic-ring-pulse.recording {
+    border: 2px solid rgba(163,45,45,0.4);
+    animation: ringPulse 1.5s ease-out infinite;
+    opacity: 1;
+  }
+  .hd-mic-ring-pulse.recording.delay {
+    animation-delay: 0.5s;
+  }
+  @keyframes ringPulse {
+    0%   { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.7); opacity: 0; }
+  }
+
+  .hd-mic-btn {
+    width: 80px; height: 80px; border-radius: 50%;
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.15s, box-shadow 0.2s;
+    position: relative; z-index: 1; flex-shrink: 0;
+  }
+  .hd-mic-btn.idle {
     background: linear-gradient(135deg,#1a6b4a,#2d9e6e);
-    color: #fff; border: none; border-radius: 14px;
+    box-shadow: 0 8px 28px rgba(26,107,74,0.38);
+  }
+  .hd-mic-btn.idle:hover {
+    transform: scale(1.06);
+    box-shadow: 0 12px 36px rgba(26,107,74,0.48);
+  }
+  .hd-mic-btn.recording {
+    background: linear-gradient(135deg,#a32d2d,#e05252);
+    box-shadow: 0 8px 28px rgba(163,45,45,0.45);
+  }
+  .hd-mic-btn.speaking {
+    background: linear-gradient(135deg,#b7791f,#f5a623);
+    box-shadow: 0 8px 28px rgba(183,121,31,0.4);
+  }
+  .hd-mic-btn.processing {
+    background: linear-gradient(135deg,#2b6cb0,#4a90d9);
+    box-shadow: 0 8px 28px rgba(43,108,176,0.38);
+    cursor: not-allowed;
+  }
+
+  .hd-mic-status {
+    font-size: 13px; font-weight: 500; color: #1a6b4a; text-align: center;
+    min-height: 20px;
+  }
+  .hd-mic-status.recording  { color: #a32d2d; }
+  .hd-mic-status.speaking   { color: #b7791f; }
+  .hd-mic-status.processing { color: #2b6cb0; }
+
+  /* Transcript area */
+  .hd-transcript {
+    display: flex; flex-direction: column; gap: 12px;
+    max-height: 320px; overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 20px;
+  }
+  .hd-transcript::-webkit-scrollbar { width: 4px; }
+  .hd-transcript::-webkit-scrollbar-track { background: transparent; }
+  .hd-transcript::-webkit-scrollbar-thumb { background: #b5ead7; border-radius: 4px; }
+
+  .hd-msg {
+    display: flex; gap: 10px; align-items: flex-start;
+    animation: msgIn 0.3s cubic-bezier(0.22,1,0.36,1) both;
+  }
+  @keyframes msgIn {
+    from { opacity:0; transform: translateY(8px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+  .hd-msg-avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 600; flex-shrink: 0; margin-top: 2px;
+  }
+  .hd-msg-avatar.user { background: rgba(26,107,74,0.12); color: #1a6b4a; }
+  .hd-msg-avatar.ai   { background: rgba(43,108,176,0.12); color: #2b6cb0; }
+
+  .hd-msg-bubble {
+    padding: 10px 14px; border-radius: 14px;
+    font-size: 13px; line-height: 1.65; max-width: calc(100% - 44px);
+  }
+  .hd-msg-bubble.user {
+    background: rgba(26,107,74,0.08); color: #0d2e20;
+    border-bottom-left-radius: 4px;
+  }
+  .hd-msg-bubble.ai {
+    background: rgba(43,108,176,0.07); color: #0d2e20;
+    border-bottom-left-radius: 4px;
+  }
+
+  /* Text input row */
+  .hd-text-row {
+    display: flex; gap: 10px;
+    border-top: 1px solid rgba(26,107,74,0.1);
+    padding-top: 20px;
+  }
+  .hd-text-input {
+    flex: 1; padding: 12px 16px;
+    background: rgba(240,247,244,0.8);
+    border: 1px solid rgba(26,107,74,0.15);
+    border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; color: #0d2e20;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .hd-text-input::placeholder { color: #a0c4b4; }
+  .hd-text-input:focus {
+    border-color: rgba(26,107,74,0.4);
+    box-shadow: 0 0 0 3px rgba(26,107,74,0.08);
+  }
+  .hd-text-input:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .hd-send-btn {
+    padding: 12px 18px;
+    background: linear-gradient(135deg,#1a6b4a,#2d9e6e);
+    color: #fff; border: none; border-radius: 12px;
     font-family: 'DM Sans', sans-serif;
     font-size: 14px; font-weight: 500;
-    cursor: pointer; position: relative; overflow: hidden;
-    box-shadow: 0 4px 20px rgba(26,107,74,0.35);
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(26,107,74,0.32);
     transition: transform 0.15s, box-shadow 0.15s;
+    display: flex; align-items: center;
   }
-  .hd-refresh-btn::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent); }
-  .hd-refresh-btn:hover  { transform:translateY(-1px); box-shadow:0 8px 28px rgba(26,107,74,0.42); }
-  .hd-refresh-btn span   { position:relative; z-index:1; display:flex; align-items:center; gap:8px; }
-  .hd-refresh-btn.spinning svg { animation: spinIcon 0.8s linear infinite; }
-  @keyframes spinIcon { to { transform: rotate(360deg); } }
+  .hd-send-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,107,74,0.42); }
+  .hd-send-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
-  /* ── Full-screen states ── */
-  .hd-fullscreen {
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    min-height:60vh; gap:14px; font-family:'DM Sans',sans-serif;
+  /* Typing dots */
+  .hd-typing { display: flex; gap: 4px; align-items: center; padding: 2px 0; }
+  .hd-typing span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #7aaa92;
+    animation: typingBounce 1.2s ease-in-out infinite;
   }
-  .hd-spinner {
-    width:44px; height:44px;
-    border:3px solid #d4e8de; border-top-color:#1a6b4a;
-    border-radius:50%; animation:spin 0.8s linear infinite;
+  .hd-typing span:nth-child(2) { animation-delay: 0.2s; }
+  .hd-typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typingBounce {
+    0%,60%,100% { transform: translateY(0); }
+    30%          { transform: translateY(-6px); }
   }
-  @keyframes spin { to { transform:rotate(360deg); } }
-  .hd-spinner-text { font-size:14px; color:#7aaa92; }
+
+  /* Sound wave bars */
+  .hd-soundwave { display:flex; gap:3px; align-items:center; height:24px; }
+  .hd-soundwave span {
+    width:3px; border-radius:2px; background:#fff;
+    animation: waveBar 0.8s ease-in-out infinite alternate;
+  }
+  .hd-soundwave span:nth-child(1) { height:6px;  animation-delay:0s; }
+  .hd-soundwave span:nth-child(2) { height:14px; animation-delay:0.1s; }
+  .hd-soundwave span:nth-child(3) { height:10px; animation-delay:0.2s; }
+  .hd-soundwave span:nth-child(4) { height:18px; animation-delay:0.05s; }
+  .hd-soundwave span:nth-child(5) { height:8px;  animation-delay:0.15s; }
+  @keyframes waveBar {
+    from { transform: scaleY(0.4); }
+    to   { transform: scaleY(1.2); }
+  }
+
+  /* Processing spinner inside btn */
+  .hd-btn-spinner {
+    width: 22px; height: 22px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Error toast */
+  .hd-error-banner {
+    background: rgba(192,57,43,0.08);
+    border: 1px solid rgba(192,57,43,0.2);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 13px; color: #a32d2d;
+    margin-bottom: 16px;
+    text-align: center;
+  }
 `;
 
-/* ── Mini ECG canvas ── */
-const ECGWave = ({ value }) => {
-  const canvasRef = useRef(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const W = canvas.offsetWidth || 800;
-    const H = 60;
-    canvas.width  = W;
-    canvas.height = H;
-    ctx.clearRect(0, 0, W, H);
+/* ── Icons ── */
+const MicIcon = ({ size = 28, color = '#fff' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+    <line x1="12" y1="19" x2="12" y2="23"/>
+    <line x1="8" y1="23" x2="16" y2="23"/>
+  </svg>
+);
 
-    // Grid lines
-    ctx.strokeStyle = 'rgba(26,107,74,0.06)';
-    ctx.lineWidth = 1;
-    for (let x = 0; x < W; x += 40) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
-    }
-    for (let y = 0; y < H; y += 15) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
-    }
+const StopIcon = ({ size = 26, color = '#fff' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke="none">
+    <rect x="6" y="6" width="12" height="12" rx="2"/>
+  </svg>
+);
 
-    // ECG waveform (one repeating PQRST cycle)
-    const cycle = (x, offset = 0) => {
-      const t = ((x + offset) % 120) / 120;
-      if (t < 0.1)  return Math.sin(t / 0.1 * Math.PI) * 6;
-      if (t < 0.35) return 0;
-      if (t < 0.4)  return -((t - 0.35) / 0.05) * 4;
-      if (t < 0.45) return ((t - 0.4) / 0.05) * 28;
-      if (t < 0.5)  return 28 - ((t - 0.45) / 0.05) * 32;
-      if (t < 0.55) return -4 + ((t - 0.5) / 0.05) * 8;
-      if (t < 0.7)  return Math.sin((t - 0.55) / 0.15 * Math.PI) * 7;
-      return 0;
+const SpeakerIcon = ({ size = 16, color = 'currentColor' }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+  </svg>
+);
+
+const SendIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="22" y1="2" x2="11" y2="13"/>
+    <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+  </svg>
+);
+
+/* ── Speech synthesis hook ── */
+const useSpeech = () => {
+  const synthRef = useRef(window.speechSynthesis);
+
+  const speak = useCallback((text, onEnd) => {
+    if (!synthRef.current) { onEnd?.(); return; }
+    synthRef.current.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1;
+    utterance.pitch = 1;
+
+    const applyVoice = () => {
+      const voices = synthRef.current.getVoices();
+      const preferred =
+        voices.find(v => v.lang === 'en-IN') ||
+        voices.find(v => v.lang.startsWith('en'));
+      if (preferred) utterance.voice = preferred;
     };
 
-    const grad = ctx.createLinearGradient(0, 0, W, 0);
-    grad.addColorStop(0,   'rgba(26,107,74,0.2)');
-    grad.addColorStop(0.5, 'rgba(45,158,110,1)');
-    grad.addColorStop(1,   'rgba(26,107,74,0.2)');
-
-    ctx.beginPath();
-    ctx.strokeStyle = grad;
-    ctx.lineWidth = 2;
-    ctx.lineJoin  = 'round';
-    for (let x = 0; x <= W; x++) {
-      const y = H / 2 - cycle(x);
-      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    if (synthRef.current.getVoices().length === 0) {
+      synthRef.current.addEventListener('voiceschanged', applyVoice, { once: true });
+    } else {
+      applyVoice();
     }
-    ctx.stroke();
-  }, [value]);
 
-  return <canvas ref={canvasRef} className="hd-ecg-canvas" />;
+    utterance.onend   = () => onEnd?.();
+    utterance.onerror = (e) => { console.error('Speech synthesis error:', e); onEnd?.(); };
+    synthRef.current.speak(utterance);
+  }, []);
+
+  const stop = useCallback(() => {
+    synthRef.current?.cancel();
+  }, []);
+
+  return { speak, stop };
 };
 
-/* ── Icons ── */
-const HeartIcon = ({ size = 32, color = '#fff' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill={color} stroke={color} strokeWidth="0">
-    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-  </svg>
-);
-const ECGIcon = ({ size = 20, color = 'currentColor' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-  </svg>
-);
-const TempIcon = ({ size = 20, color = 'currentColor' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
-  </svg>
-);
-const BPMIcon = ({ size = 20, color = 'currentColor' }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-  </svg>
-);
-const RefreshIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="23 4 23 10 17 10"/>
-    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-  </svg>
-);
-const ClockIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-  </svg>
-);
-const IdIcon = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3h-8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z"/>
-  </svg>
-);
+/* ── Main component ── */
+const VoiceAssistant = () => {
+  const { email } = useAuth();
 
-const HealthDataDisplay = () => {
-  const { email }  = useAuth();
-  const [data, setData]       = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [error, setError]     = useState(null);
-  const [lastUpdated, setLastUpdated] = useState(null);
+  const [micState, setMicState]   = useState('idle'); // idle | recording | processing | speaking
+  const [messages, setMessages]   = useState([]);
+  const [textInput, setTextInput] = useState('');
+  const [autoSpeak, setAutoSpeak] = useState(true);
+  const [isTyping, setIsTyping]   = useState(false);
+  const [bannerErr, setBannerErr] = useState('');
 
-  const fetchData = async (isRefresh = false) => {
+  const recognitionRef = useRef(null);
+  const transcriptRef  = useRef(null);
+  const micStateRef    = useRef('idle'); // keep ref in sync for use inside callbacks
+  const { speak, stop } = useSpeech();
+
+  // Keep ref in sync
+  useEffect(() => { micStateRef.current = micState; }, [micState]);
+
+  // Auto-scroll transcript
+  useEffect(() => {
+    if (transcriptRef.current) {
+      transcriptRef.current.scrollTop = transcriptRef.current.scrollHeight;
+    }
+  }, [messages, isTyping]);
+
+  /* ── Send to backend ── */
+  const sendPrompt = useCallback(async (promptText) => {
+    if (!promptText.trim()) return;
+    setBannerErr('');
+
     const token = localStorage.getItem('token');
-    if (!token)  { setError('Authentication token not found. Please log in.'); setLoading(false); return; }
-    if (!email)  { setError('User email not found. Please log in.');           setLoading(false); return; }
-    if (isRefresh) setRefreshing(true);
+
+    setMessages(prev => [...prev, { role: 'user', text: promptText }]);
+    setMicState('processing');
+    setIsTyping(true);
+
     try {
-      const res = await axios.get(
-        `https://aura-wo8f.vercel.app/api/user/latest-health-data?email=${encodeURIComponent(email)}`,
+      const res = await axios.post(
+        'https://aura-wo8f.vercel.app/api/user/health',
+        { prompt: promptText, email },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setData(res.data.latest);
-      setLastUpdated(new Date());
-      setError(null);
+
+      const reply = res.data?.response?.reply || "I couldn't understand that.";
+
+      setIsTyping(false);
+      setMessages(prev => [...prev, { role: 'ai', text: reply }]);
+
+      if (autoSpeak) {
+        setMicState('speaking');
+        speak(reply, () => setMicState('idle'));
+      } else {
+        setMicState('idle');
+      }
     } catch (err) {
-      setError(err.response?.status === 401
-        ? 'Unauthorized. Please check your token.'
-        : 'Failed to fetch data. Please try again.'
-      );
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
+      console.error('API error:', err.response?.data || err.message);
+      setIsTyping(false);
+
+      const errMsg = err.response?.data?.message || 'Server error. Please try again.';
+      setMessages(prev => [...prev, { role: 'ai', text: errMsg }]);
+
+      if (autoSpeak) {
+        setMicState('speaking');
+        speak(errMsg, () => setMicState('idle'));
+      } else {
+        setMicState('idle');
+      }
     }
+  }, [email, autoSpeak, speak]);
+
+  /* ── Mic helpers ── */
+  const startRecording = useCallback(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      setBannerErr('Speech recognition is not supported. Please use Chrome or Edge.');
+      return;
+    }
+
+    // Stop any ongoing speech first
+    stop();
+
+    const rec = new SpeechRecognition();
+    rec.lang            = 'en-IN';
+    rec.interimResults  = false;
+    rec.maxAlternatives = 1;
+    rec.continuous      = false;
+
+    rec.onstart = () => {
+      setMicState('recording');
+    };
+
+    rec.onresult = (e) => {
+      const transcript = e.results[0][0].transcript;
+      recognitionRef.current = null;
+      sendPrompt(transcript);
+    };
+
+    rec.onerror = (e) => {
+      console.error('Speech recognition error:', e.error);
+      recognitionRef.current = null;
+      setMicState('idle');
+      if (e.error === 'not-allowed') {
+        setBannerErr('Microphone access denied. Please allow mic permission in your browser.');
+      } else if (e.error !== 'aborted') {
+        setBannerErr(`Mic error: ${e.error}`);
+      }
+    };
+
+    rec.onend = () => {
+      // Only reset if still in recording state (not already moved to processing)
+      if (micStateRef.current === 'recording') {
+        setMicState('idle');
+      }
+      recognitionRef.current = null;
+    };
+
+    recognitionRef.current = rec;
+
+    try {
+      rec.start();
+    } catch (err) {
+      console.error('Recognition start error:', err);
+      setMicState('idle');
+      setBannerErr('Could not start microphone. Try again.');
+    }
+  }, [stop, sendPrompt]);
+
+  const stopRecording = useCallback(() => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      recognitionRef.current = null;
+    }
+    setMicState('idle');
+  }, []);
+
+  const handleMicClick = () => {
+    setBannerErr('');
+    if (micState === 'recording') {
+      stopRecording();
+    } else if (micState === 'speaking') {
+      stop();
+      setMicState('idle');
+    } else if (micState === 'idle') {
+      startRecording();
+    }
+    // processing: do nothing (btn visually disabled via pointer-events)
   };
 
-  useEffect(() => { fetchData(); }, [email]);
+  /* ── Text input ── */
+  const handleTextSend = () => {
+    if (!textInput.trim() || micState === 'processing' || micState === 'recording') return;
+    sendPrompt(textInput.trim());
+    setTextInput('');
+  };
 
-  const formatTimestamp = (ts) =>
-    new Date(ts).toLocaleString('en-IN', { day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:true });
+  const handleTextKey = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleTextSend(); }
+  };
 
-  const isNoBeat  = data?.STATUS === 'NO BEAT';
-  const isCritical = isNoBeat;
+  const micStatusText = {
+    idle:       'Tap the mic to ask a question',
+    recording:  'Listening… tap to stop',
+    processing: 'Processing…',
+    speaking:   'Speaking… tap to stop',
+  }[micState] || '';
 
-  if (loading) return (
-    <>
-      <style>{styles}</style>
-      <div className="hd-fullscreen">
-        <div className="hd-spinner" />
-        <div className="hd-spinner-text">Fetching your health data…</div>
-      </div>
-    </>
-  );
-
-  if (error) return (
-    <>
-      <style>{styles}</style>
-      <div className="hd-fullscreen">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#c0392b" strokeWidth="1.5" strokeLinecap="round">
-          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-        </svg>
-        <div style={{fontSize:'14px',color:'#c0392b',textAlign:'center',maxWidth:280}}>{error}</div>
-      </div>
-    </>
-  );
+  const isBusy = micState === 'processing';
 
   return (
     <>
       <style>{styles}</style>
       <div className="hd-root">
-        <div className="hd-blob hd-blob-1" />
-        <div className="hd-blob hd-blob-2" />
-        <div className="hd-blob hd-blob-3" />
+        <div className="hd-blob hd-blob-1"/>
+        <div className="hd-blob hd-blob-2"/>
+        <div className="hd-blob hd-blob-3"/>
 
         <div className="hd-inner">
-
           {/* Header */}
           <div className="hd-page-header">
-            <div>
-              <div className="hd-page-label">Real-time monitoring</div>
-              <div className="hd-page-title">Health Monitor</div>
-              <div className="hd-page-sub">Live vitals from your connected device.</div>
-            </div>
-            <div style={{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}>
-              <div className="hd-live-badge">
-                <div className="hd-live-dot" />
-                Live
+            <div className="hd-page-label">AI-powered</div>
+            <div className="hd-page-title">Health Assistant</div>
+            <div className="hd-page-sub">Ask about your vitals by voice or text.</div>
+          </div>
+
+          {/* Panel */}
+          <div className="hd-voice-panel">
+            <div className="hd-voice-header">
+              <div className="hd-voice-title">
+                <SpeakerIcon size={15} color="#1a6b4a"/>
+                <span className="hd-voice-title-label">Voice Assistant</span>
               </div>
+              <label className="hd-speak-toggle">
+                <input
+                  type="checkbox"
+                  checked={autoSpeak}
+                  onChange={e => setAutoSpeak(e.target.checked)}
+                />
+                Auto-speak
+              </label>
+            </div>
+
+            {/* Error banner */}
+            {bannerErr && <div className="hd-error-banner">{bannerErr}</div>}
+
+            {/* Mic */}
+            <div className="hd-mic-area">
+              <div className="hd-mic-ring">
+                <div className={`hd-mic-ring-pulse ${micState === 'recording' ? 'recording' : ''}`}/>
+                <div className={`hd-mic-ring-pulse ${micState === 'recording' ? 'recording delay' : ''}`}/>
+                <button
+                  className={`hd-mic-btn ${micState}`}
+                  onClick={handleMicClick}
+                  title={micStatusText}
+                  style={{ pointerEvents: isBusy ? 'none' : 'auto' }}
+                >
+                  {micState === 'speaking' ? (
+                    <div className="hd-soundwave">
+                      <span/><span/><span/><span/><span/>
+                    </div>
+                  ) : micState === 'recording' ? (
+                    <StopIcon size={24}/>
+                  ) : micState === 'processing' ? (
+                    <div className="hd-btn-spinner"/>
+                  ) : (
+                    <MicIcon size={26}/>
+                  )}
+                </button>
+              </div>
+              <div className={`hd-mic-status ${micState}`}>{micStatusText}</div>
+            </div>
+
+            {/* Transcript */}
+            {(messages.length > 0 || isTyping) && (
+              <div className="hd-transcript" ref={transcriptRef}>
+                {messages.map((msg, i) => (
+                  <div key={i} className="hd-msg">
+                    <div className={`hd-msg-avatar ${msg.role}`}>
+                      {msg.role === 'user' ? 'You' : 'AI'}
+                    </div>
+                    <div className={`hd-msg-bubble ${msg.role}`}>{msg.text}</div>
+                  </div>
+                ))}
+                {isTyping && (
+                  <div className="hd-msg">
+                    <div className="hd-msg-avatar ai">AI</div>
+                    <div className="hd-msg-bubble ai">
+                      <div className="hd-typing"><span/><span/><span/></div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Text input */}
+            <div className="hd-text-row">
+              <input
+                className="hd-text-input"
+                type="text"
+                placeholder="Or type your question here…"
+                value={textInput}
+                onChange={e => setTextInput(e.target.value)}
+                onKeyDown={handleTextKey}
+                disabled={isBusy}
+              />
               <button
-                className={`hd-refresh-btn${refreshing?' spinning':''}`}
-                onClick={() => fetchData(true)}
-                disabled={refreshing}
+                className="hd-send-btn"
+                onClick={handleTextSend}
+                disabled={!textInput.trim() || isBusy}
               >
-                <span><RefreshIcon /> {refreshing ? 'Refreshing…' : 'Refresh'}</span>
+                <SendIcon/>
               </button>
             </div>
           </div>
-
-          {/* Status hero */}
-          <div className="hd-hero">
-            <div className={`hd-hero-bg ${isCritical ? 'critical' : 'normal'}`}>
-              <div className="hd-hero-left">
-                <div className="hd-hero-status-label">Current status</div>
-                <div className="hd-hero-status-val">{data.STATUS}</div>
-                <div className="hd-hero-status-sub">
-                  {isCritical
-                    ? 'Critical — no heartbeat detected. Seek immediate help.'
-                    : 'All vitals within expected range.'}
-                </div>
-              </div>
-              <div className="hd-hero-icon">
-                <HeartIcon size={38} color={isCritical ? '#fca5a5' : '#fff'} />
-              </div>
-            </div>
-            <div className="hd-hero-footer">
-              <div className="hd-hero-footer-item">
-                <ClockIcon />
-                Last reading: <span className="hd-hero-footer-val">{formatTimestamp(data.timestamp)}</span>
-              </div>
-              {lastUpdated && (
-                <div className="hd-hero-footer-item">
-                  Fetched: <span className="hd-hero-footer-val">{lastUpdated.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:true})}</span>
-                </div>
-              )}
-              <div className="hd-hero-footer-item">
-                <IdIcon />
-                <span className="hd-hero-footer-val" style={{fontSize:11,letterSpacing:'0.5px'}}>{data._id}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Vitals grid */}
-          <div className="hd-vitals">
-
-            {/* ECG */}
-            <div className="hd-vital-card">
-              <div className="hd-vital-accent ecg" />
-              <div className="hd-vital-body">
-                <div className="hd-vital-icon ecg"><ECGIcon /></div>
-                <div className="hd-vital-label">ECG reading</div>
-                <div className="hd-vital-val">
-                  {data.ECG}
-                </div>
-                <div className="hd-vital-range">Electrocardiogram signal</div>
-              </div>
-            </div>
-
-            {/* BPM */}
-            <div className="hd-vital-card">
-              <div className="hd-vital-accent bpm" />
-              <div className="hd-vital-body">
-                <div className="hd-vital-icon bpm"><BPMIcon /></div>
-                <div className="hd-vital-label">Heart rate</div>
-                <div className="hd-vital-val">
-                  {data.BPM}
-                  <span className="hd-vital-unit">bpm</span>
-                </div>
-                <div className="hd-vital-range">Normal: 60 – 100 bpm</div>
-              </div>
-            </div>
-
-            {/* Temperature */}
-            <div className="hd-vital-card">
-              <div className="hd-vital-accent temp" />
-              <div className="hd-vital-body">
-                <div className="hd-vital-icon temp"><TempIcon /></div>
-                <div className="hd-vital-label">Body temperature</div>
-                <div className="hd-vital-val">
-                  {data.TEMP}
-                  <span className="hd-vital-unit">°C</span>
-                </div>
-                <div className="hd-vital-range">Normal: 36.1 – 37.2 °C</div>
-              </div>
-            </div>
-
-          </div>
-
-          {/* ECG waveform strip */}
-          <div className="hd-ecg-strip">
-            <div className="hd-ecg-header">
-              <div className="hd-ecg-title">ECG waveform</div>
-              <div className="hd-ecg-val">Lead II · {data.BPM} bpm</div>
-            </div>
-            <ECGWave value={data.ECG} />
-          </div>
-
         </div>
       </div>
     </>
   );
 };
 
-export default HealthDataDisplay;
+export default VoiceAssistant;
