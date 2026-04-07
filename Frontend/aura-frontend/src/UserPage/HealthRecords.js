@@ -43,7 +43,6 @@ const styles = `
     display: flex; align-items: flex-end; justify-content: space-between;
     margin-bottom: 32px; gap: 16px; flex-wrap: wrap;
   }
-  .dis-page-header-left {}
   .dis-page-label {
     font-size: 11px; font-weight: 500; color: #1a6b4a;
     letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px;
@@ -131,34 +130,26 @@ const styles = `
   }
   .dis-card:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(10,60,40,0.13); }
 
-  /* Card accent bar */
-  .dis-card-accent {
-    height: 5px;
-    background: linear-gradient(90deg,#1a6b4a,#2d9e6e);
-  }
+  .dis-card-accent { height: 5px; background: linear-gradient(90deg,#1a6b4a,#2d9e6e); }
   .dis-card-accent.paused       { background: linear-gradient(90deg,#3b6eb4,#4a90d9); }
   .dis-card-accent.discontinued { background: linear-gradient(90deg,#a32d2d,#e05252); }
 
   .dis-card-body { padding: 22px 22px 20px; flex:1; display:flex; flex-direction:column; gap:14px; }
 
-  /* Card top row */
   .dis-card-top {
     display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
   }
   .dis-card-name {
     font-family: 'Playfair Display', serif;
-    font-size: 19px; font-weight: 600; color: #0d2e20;
-    line-height: 1.2;
+    font-size: 19px; font-weight: 600; color: #0d2e20; line-height: 1.2;
   }
 
-  /* Status badge + dropdown */
   .dis-status-wrap { position: relative; flex-shrink: 0; }
   .dis-status-badge {
     display: flex; align-items: center; gap: 5px;
     padding: 5px 12px; border-radius: 99px;
     font-size: 12px; font-weight: 500; cursor: pointer; border: none;
-    transition: opacity 0.15s;
-    white-space: nowrap;
+    transition: opacity 0.15s; white-space: nowrap;
   }
   .dis-status-badge:hover { opacity: 0.85; }
   .dis-status-badge.ongoing      { background:rgba(26,107,74,0.12);  color:#1a6b4a; }
@@ -171,10 +162,8 @@ const styles = `
 
   .dis-status-menu {
     position: absolute; top: calc(100% + 6px); right: 0;
-    background: #fff;
-    border: 1px solid #d4e8de;
-    border-radius: 12px;
-    box-shadow: 0 8px 28px rgba(10,60,40,0.14);
+    background: #fff; border: 1px solid #d4e8de;
+    border-radius: 12px; box-shadow: 0 8px 28px rgba(10,60,40,0.14);
     overflow: hidden; z-index: 20; min-width: 140px;
     animation: menuIn 0.18s ease;
   }
@@ -192,13 +181,8 @@ const styles = `
   .dis-status-option.active { color: #1a6b4a; background: rgba(26,107,74,0.06); }
   .dis-status-option-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
 
-  /* Summary */
-  .dis-summary {
-    font-size: 13px; color: #5a8a72; line-height: 1.65;
-    font-style: italic;
-  }
+  .dis-summary { font-size: 13px; color: #5a8a72; line-height: 1.65; font-style: italic; }
 
-  /* Medications */
   .dis-meds-label {
     font-size: 10px; font-weight: 500; color: #1a6b4a;
     letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px;
@@ -206,8 +190,7 @@ const styles = `
   .dis-med-list { display: flex; flex-direction: column; gap: 8px; }
   .dis-med-item {
     display: flex; align-items: flex-start; gap: 10px;
-    background: rgba(26,107,74,0.05);
-    border: 1px solid rgba(26,107,74,0.1);
+    background: rgba(26,107,74,0.05); border: 1px solid rgba(26,107,74,0.1);
     border-radius: 10px; padding: 10px 12px;
   }
   .dis-med-icon {
@@ -218,20 +201,15 @@ const styles = `
   }
   .dis-med-name { font-size:13px; font-weight:500; color:#0d2e20; }
   .dis-med-detail { font-size:12px; color:#7aaa92; margin-top:2px; }
-
-  /* Timing chips */
   .dis-timing-chips { display:flex; gap:5px; flex-wrap:wrap; margin-top:5px; }
   .dis-timing-chip {
     font-size:11px; padding:2px 8px; border-radius:99px;
     background: rgba(26,107,74,0.1); color:#1a6b4a; font-weight:500;
   }
 
-  /* Doctor info */
   .dis-card-footer {
     display: flex; gap: 12px; flex-wrap: wrap;
-    padding-top: 14px;
-    border-top: 1px solid #e8f4ee;
-    margin-top: auto;
+    padding-top: 14px; border-top: 1px solid #e8f4ee; margin-top: auto;
   }
   .dis-info-chip {
     display: flex; align-items: center; gap: 6px;
@@ -253,7 +231,7 @@ const styles = `
   .dis-spinner-text { font-size:14px; color:#7aaa92; }
 
   /* ═══════════════════════
-     MODAL
+     ADD CONDITION MODAL
   ═══════════════════════ */
   .dis-overlay {
     position:fixed; inset:0;
@@ -266,8 +244,7 @@ const styles = `
   @keyframes fadeIn { from{opacity:0} to{opacity:1} }
 
   .dis-modal {
-    background:#fff;
-    border-radius:26px;
+    background:#fff; border-radius:26px;
     width:100%; max-width:680px;
     max-height:92vh; overflow-y:auto;
     box-shadow:0 24px 80px rgba(8,46,31,0.28);
@@ -280,20 +257,17 @@ const styles = `
 
   .dis-modal-header {
     background:linear-gradient(135deg,#1a6b4a,#2d9e6e);
-    padding:28px 30px 24px;
-    border-radius:26px 26px 0 0;
+    padding:28px 30px 24px; border-radius:26px 26px 0 0;
     position:relative; overflow:hidden;
   }
   .dis-modal-header::before {
-    content:'';
-    position:absolute; inset:0;
+    content:''; position:absolute; inset:0;
     background:url("data:image/svg+xml,%3Csvg width='400' height='160' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='350' cy='80' r='130' fill='none' stroke='%23ffffff08' stroke-width='1'/%3E%3Ccircle cx='350' cy='80' r='80' fill='none' stroke='%23ffffff0a' stroke-width='1'/%3E%3C/svg%3E") right center/auto no-repeat;
     pointer-events:none;
   }
   .dis-modal-title {
     font-family:'Playfair Display',serif;
-    font-size:24px; font-weight:600; color:#fff;
-    position:relative; z-index:1;
+    font-size:24px; font-weight:600; color:#fff; position:relative; z-index:1;
   }
   .dis-modal-sub { font-size:13px; color:#a8d8c2; margin-top:4px; position:relative; z-index:1; }
   .dis-modal-close {
@@ -308,7 +282,6 @@ const styles = `
 
   .dis-modal-body { padding:28px 30px 30px; }
 
-  /* Form elements */
   .dis-form-section { margin-bottom:26px; }
   .dis-form-section-title {
     font-size:10px; font-weight:500; color:#1a6b4a;
@@ -340,20 +313,15 @@ const styles = `
     box-shadow:0 0 0 4px rgba(26,107,74,0.1);
   }
 
-  /* Med card in modal */
   .dis-med-card {
     background:rgba(240,247,244,0.6);
     border:1.5px solid #c8e0d4; border-radius:16px;
     padding:18px; margin-bottom:14px;
   }
   .dis-med-card-header {
-    display:flex; align-items:center; justify-content:space-between;
-    margin-bottom:14px;
+    display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;
   }
-  .dis-med-card-title {
-    font-size:13px; font-weight:500; color:#1a6b4a;
-    letter-spacing:0.5px;
-  }
+  .dis-med-card-title { font-size:13px; font-weight:500; color:#1a6b4a; letter-spacing:0.5px; }
   .dis-remove-btn {
     display:flex; align-items:center; gap:5px;
     padding:5px 11px; border-radius:8px;
@@ -363,12 +331,10 @@ const styles = `
   }
   .dis-remove-btn:hover { background:rgba(192,57,43,0.15); }
 
-  /* Timing chips (modal) */
   .dis-timing-row { display:flex; gap:8px; flex-wrap:wrap; }
   .dis-timing-toggle {
     padding:8px 16px; border-radius:99px;
-    background:rgba(255,255,255,0.9);
-    border:1.5px solid #c8e0d4;
+    background:rgba(255,255,255,0.9); border:1.5px solid #c8e0d4;
     font-size:13px; font-weight:500; color:#5a8a72;
     cursor:pointer; transition:all 0.18s;
   }
@@ -389,21 +355,38 @@ const styles = `
   }
   .dis-add-med-btn:hover { background:rgba(26,107,74,0.05); border-color:#1a6b4a; }
 
-  /* Modal actions */
+  /* ── Modal action row ── */
   .dis-modal-actions {
     display:flex; gap:12px; margin-top:28px; padding-top:22px;
-    border-top:1px solid #d4e8de;
+    border-top:1px solid #d4e8de; flex-wrap: wrap;
   }
   .dis-modal-cancel {
-    flex:1; padding:13px;
+    flex:1; min-width: 100px; padding:13px;
     border:1.5px solid #c8e0d4; border-radius:12px;
     background:none; color:#5a8a72;
     font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500;
     cursor:pointer; transition:background 0.15s;
   }
   .dis-modal-cancel:hover { background:rgba(26,107,74,0.05); }
+
+  /* ── Verify button ── */
+  .dis-verify-btn {
+    flex: 1.2; min-width: 120px; padding:13px;
+    background: linear-gradient(135deg, #1a4a8a 0%, #2d6fd9 100%);
+    border:none; border-radius:12px; color:#fff;
+    font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500;
+    cursor:pointer; position:relative; overflow:hidden;
+    box-shadow:0 4px 16px rgba(26,74,138,0.35);
+    transition:transform 0.15s, box-shadow 0.15s;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .dis-verify-btn::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent); }
+  .dis-verify-btn:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 24px rgba(26,74,138,0.42); }
+  .dis-verify-btn:disabled { opacity:0.7; cursor:not-allowed; }
+  .dis-verify-btn span { position:relative; z-index:1; display:flex; align-items:center; gap:8px; }
+
   .dis-modal-submit {
-    flex:2; padding:13px;
+    flex:2; min-width: 130px; padding:13px;
     background:linear-gradient(135deg,#1a6b4a,#2d9e6e);
     border:none; border-radius:12px; color:#fff;
     font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500;
@@ -413,8 +396,142 @@ const styles = `
     display:flex; align-items:center; justify-content:center; gap:8px;
   }
   .dis-modal-submit::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent); }
-  .dis-modal-submit:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(26,107,74,0.42); }
+  .dis-modal-submit:hover:not(:disabled) { transform:translateY(-1px); box-shadow:0 8px 24px rgba(26,107,74,0.42); }
+  .dis-modal-submit:disabled { opacity:0.7; cursor:not-allowed; }
   .dis-modal-submit span { position:relative; z-index:1; display:flex; align-items:center; gap:8px; }
+
+  /* ═══════════════════════
+     VERIFY RESULT MODAL
+  ═══════════════════════ */
+  .ver-overlay {
+    position:fixed; inset:0;
+    background:rgba(8,46,31,0.55);
+    backdrop-filter:blur(8px);
+    display:flex; align-items:center; justify-content:center;
+    z-index:200; padding:16px;
+    animation:fadeIn 0.2s ease;
+  }
+  .ver-modal {
+    background:#fff; border-radius:26px;
+    width:100%; max-width:560px;
+    max-height:88vh; overflow-y:auto;
+    box-shadow:0 24px 80px rgba(8,46,31,0.3);
+    animation:modalIn 0.35s cubic-bezier(0.22,1,0.36,1) both;
+  }
+
+  /* Header changes color based on safe/unsafe */
+  .ver-header {
+    padding:28px 30px 22px; border-radius:26px 26px 0 0;
+    position:relative; overflow:hidden;
+  }
+  .ver-header.safe    { background: linear-gradient(135deg,#1a6b4a,#2d9e6e); }
+  .ver-header.unsafe  { background: linear-gradient(135deg,#8a1a1a,#d94040); }
+  .ver-header.loading { background: linear-gradient(135deg,#1a4a8a,#2d6fd9); }
+  .ver-header::before {
+    content:''; position:absolute; inset:0;
+    background:url("data:image/svg+xml,%3Csvg width='400' height='160' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='350' cy='80' r='130' fill='none' stroke='%23ffffff08' stroke-width='1'/%3E%3C/svg%3E") right center/auto no-repeat;
+    pointer-events:none;
+  }
+  .ver-header-icon {
+    width:52px; height:52px; border-radius:16px;
+    background:rgba(255,255,255,0.18);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:14px; position:relative; z-index:1;
+  }
+  .ver-header-title {
+    font-family:'Playfair Display',serif;
+    font-size:22px; font-weight:600; color:#fff;
+    position:relative; z-index:1;
+  }
+  .ver-header-sub { font-size:13px; color:rgba(255,255,255,0.75); margin-top:4px; position:relative; z-index:1; }
+  .ver-close {
+    position:absolute; top:20px; right:20px;
+    width:32px; height:32px; border-radius:50%;
+    background:rgba(255,255,255,0.15); border:none;
+    color:#fff; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:background 0.15s; z-index:1;
+  }
+  .ver-close:hover { background:rgba(255,255,255,0.28); }
+
+  .ver-body { padding:24px 28px 28px; display:flex; flex-direction:column; gap:18px; }
+
+  /* Summary box */
+  .ver-summary-box {
+    background:rgba(240,247,244,0.7);
+    border:1px solid #d4e8de; border-radius:14px;
+    padding:16px 18px;
+    font-size:14px; color:#2a5a3e; line-height:1.7;
+  }
+
+  /* Section */
+  .ver-section-title {
+    font-size:10px; font-weight:500; color:#1a6b4a;
+    letter-spacing:1.8px; text-transform:uppercase;
+    margin-bottom:10px; display:flex; align-items:center; gap:10px;
+  }
+  .ver-section-title::after { content:''; flex:1; height:1px; background:#d4e8de; }
+  .ver-section-title.danger { color:#c0392b; }
+  .ver-section-title.danger::after { background:#f5c6c6; }
+
+  /* Item chips */
+  .ver-item-list { display:flex; flex-direction:column; gap:8px; }
+  .ver-item {
+    display:flex; align-items:flex-start; gap:10px;
+    padding:11px 14px; border-radius:11px;
+    font-size:13px; line-height:1.55;
+  }
+  .ver-item.warn {
+    background:rgba(255,180,0,0.08);
+    border:1px solid rgba(255,180,0,0.25);
+    color:#7a5a00;
+  }
+  .ver-item.danger {
+    background:rgba(192,57,43,0.07);
+    border:1px solid rgba(192,57,43,0.2);
+    color:#8a2020;
+  }
+  .ver-item.ok {
+    background:rgba(26,107,74,0.07);
+    border:1px solid rgba(26,107,74,0.18);
+    color:#1a5a3a;
+  }
+  .ver-item-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+  .ver-item.warn   .ver-item-dot { background:#f0a500; }
+  .ver-item.danger .ver-item-dot { background:#e05252; }
+  .ver-item.ok     .ver-item-dot { background:#2d9e6e; }
+
+  /* Safe badge */
+  .ver-safe-badge {
+    display:inline-flex; align-items:center; gap:7px;
+    padding:8px 16px; border-radius:99px;
+    font-size:13px; font-weight:500;
+  }
+  .ver-safe-badge.safe   { background:rgba(26,107,74,0.1);  color:#1a6b4a; }
+  .ver-safe-badge.unsafe { background:rgba(192,57,43,0.1);  color:#c0392b; }
+
+  .ver-done-btn {
+    width:100%; padding:14px;
+    background:linear-gradient(135deg,#1a6b4a,#2d9e6e);
+    border:none; border-radius:12px; color:#fff;
+    font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500;
+    cursor:pointer; margin-top:4px;
+    box-shadow:0 4px 16px rgba(26,107,74,0.3);
+    transition:transform 0.15s;
+  }
+  .ver-done-btn:hover { transform:translateY(-1px); }
+
+  /* Loading state inside verify modal */
+  .ver-loading {
+    display:flex; flex-direction:column; align-items:center;
+    padding:40px 24px; gap:14px;
+  }
+  .ver-loading-text { font-size:14px; color:#7aaa92; }
+  .ver-spinner {
+    width:40px; height:40px;
+    border:3px solid #d4e8de; border-top-color:#2d6fd9;
+    border-radius:50%; animation:spin 0.8s linear infinite;
+  }
 `;
 
 const TIMING_OPTIONS = ['Morning', 'Afternoon', 'Evening', 'Night'];
@@ -425,7 +542,7 @@ const STATUS_CONFIG = {
   discontinued: { dot: '#e05252', label: 'Discontinued' },
 };
 
-const BLANK_MED = () => ({ name: '', dose: '', timing: [], duration: '', status: 'pending' });
+const BLANK_MED     = () => ({ name: '', dose: '', timing: [], duration: '', status: 'pending' });
 const BLANK_DISEASE = () => ({
   name: '', summary: '', medications: [BLANK_MED()],
   assignedDoctor: '', nextAppointment: '', status: 'ongoing',
@@ -433,14 +550,20 @@ const BLANK_DISEASE = () => ({
 
 const Diseases = () => {
   const { email } = useAuth();
-  const [diseases, setDiseases]         = useState([]);
-  const [loading, setLoading]           = useState(true);
-  const [error, setError]               = useState('');
-  const [showModal, setShowModal]       = useState(false);
-  const [openDropId, setOpenDropId]     = useState(null);
-  const [submitting, setSubmitting]     = useState(false);
-  const [newDisease, setNewDisease]     = useState(BLANK_DISEASE());
+  const [diseases, setDiseases]       = useState([]);
+  const [loading, setLoading]         = useState(true);
+  const [error, setError]             = useState('');
+  const [showModal, setShowModal]     = useState(false);
+  const [openDropId, setOpenDropId]   = useState(null);
+  const [submitting, setSubmitting]   = useState(false);
+  const [newDisease, setNewDisease]   = useState(BLANK_DISEASE());
 
+  // Verify states
+  const [verifying, setVerifying]         = useState(false);
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [verifyResult, setVerifyResult]   = useState(null);
+
+  /* ─── Fetch diseases ─── */
   const fetchDiseases = async () => {
     try {
       const res = await fetch(
@@ -451,7 +574,7 @@ const Diseases = () => {
       const data = await res.json();
       setDiseases(data.diseases || []);
     } catch { setError('Error loading health conditions.'); }
-    finally   { setLoading(false); }
+    finally  { setLoading(false); }
   };
 
   useEffect(() => {
@@ -459,7 +582,7 @@ const Diseases = () => {
     fetchDiseases();
   }, [email]);
 
-  // Med handlers
+  /* ─── Med handlers ─── */
   const addMed    = () => setNewDisease(d => ({ ...d, medications: [...d.medications, BLANK_MED()] }));
   const removeMed = (i) => setNewDisease(d => ({ ...d, medications: d.medications.filter((_,j) => j!==i) }));
   const setMed    = (i, field, val) => setNewDisease(d => ({
@@ -468,13 +591,14 @@ const Diseases = () => {
   }));
   const toggleTiming = (mi, slot) => {
     const meds = [...newDisease.medications];
-    const med  = {...meds[mi]};
+    const med  = { ...meds[mi] };
     const idx  = med.timing.findIndex(t => t.slot === slot);
     idx === -1 ? med.timing.push({ slot, status:'pending' }) : med.timing.splice(idx,1);
     meds[mi] = med;
     setNewDisease(d => ({...d, medications: meds}));
   };
 
+  /* ─── Submit new disease ─── */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!newDisease.name || !newDisease.summary) return;
@@ -493,6 +617,52 @@ const Diseases = () => {
     finally  { setSubmitting(false); }
   };
 
+  /* ─── Verify medications ─── */
+  const handleVerify = async () => {
+    // Build payload from current medications in the form
+    const medications = newDisease.medications
+      .filter(m => m.name.trim()) // skip empty rows
+      .map(m => ({
+        name:     m.name,
+        dose:     m.dose,
+        disease:  newDisease.name || 'Unspecified',
+        duration: m.duration,
+      }));
+
+    if (medications.length === 0) {
+      alert('Please fill in at least one medication name before verifying.');
+      return;
+    }
+
+    setVerifying(true);
+    setVerifyResult(null);
+    setShowVerifyModal(true); // show modal immediately with loading state
+
+    try {
+      const res = await fetch('https://aura-wo8f.vercel.app/api/user/verify', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ medications }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setVerifyResult({ error: data.message || 'Verification failed. Please try again.' });
+      } else {
+        setVerifyResult(data.analysis);
+      }
+    } catch {
+      setVerifyResult({ error: 'Network error. Please check your connection.' });
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  /* ─── Status change ─── */
   const handleStatusChange = async (diseaseId, newStatus) => {
     try {
       await fetch('https://aura-wo8f.vercel.app/api/user/update-med-status', {
@@ -512,6 +682,7 @@ const Diseases = () => {
     discontinued: diseases.filter(d => d.status === 'discontinued').length,
   };
 
+  /* ─── Loading / Error screens ─── */
   if (loading) return (
     <>
       <style>{styles}</style>
@@ -532,6 +703,7 @@ const Diseases = () => {
     </>
   );
 
+  /* ─── Render ─── */
   return (
     <>
       <style>{styles}</style>
@@ -594,8 +766,6 @@ const Diseases = () => {
                 <div key={disease._id} className="dis-card">
                   <div className={`dis-card-accent ${status}`} />
                   <div className="dis-card-body">
-
-                    {/* Top */}
                     <div className="dis-card-top">
                       <div className="dis-card-name">{disease.name}</div>
                       <div className="dis-status-wrap">
@@ -623,11 +793,7 @@ const Diseases = () => {
                         )}
                       </div>
                     </div>
-
-                    {/* Summary */}
                     <div className="dis-summary">{disease.summary}</div>
-
-                    {/* Meds */}
                     {disease.medications?.length > 0 && (
                       <div>
                         <div className="dis-meds-label">Medications</div>
@@ -653,8 +819,6 @@ const Diseases = () => {
                         </div>
                       </div>
                     )}
-
-                    {/* Footer */}
                     <div className="dis-card-footer">
                       <div className="dis-info-chip">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -667,7 +831,6 @@ const Diseases = () => {
                         </div>
                       )}
                     </div>
-
                   </div>
                 </div>
               );
@@ -675,7 +838,9 @@ const Diseases = () => {
           </div>
         </div>
 
-        {/* ── Modal ── */}
+        {/* ══════════════════════════
+            ADD CONDITION MODAL
+        ══════════════════════════ */}
         {showModal && (
           <div className="dis-overlay" onClick={() => setShowModal(false)}>
             <div className="dis-modal" onClick={e => e.stopPropagation()}>
@@ -772,9 +937,27 @@ const Diseases = () => {
                   </button>
                 </div>
 
-                {/* Actions */}
+                {/* Actions: Cancel | Verify | Add condition */}
                 <div className="dis-modal-actions">
-                  <button className="dis-modal-cancel" type="button" onClick={() => setShowModal(false)}>Cancel</button>
+                  <button className="dis-modal-cancel" type="button" onClick={() => setShowModal(false)}>
+                    Cancel
+                  </button>
+
+                  {/* ── Verify button ── */}
+                  <button className="dis-verify-btn" type="button" onClick={handleVerify} disabled={verifying}>
+                    <span>
+                      {verifying
+                        ? <><div className="dis-spinner" style={{width:15,height:15,borderWidth:2,borderTopColor:'#fff'}} />Checking…</>
+                        : <>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                              <path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/>
+                            </svg>
+                            Verify Meds
+                          </>
+                      }
+                    </span>
+                  </button>
+
                   <button className="dis-modal-submit" type="button" onClick={handleSubmit} disabled={submitting}>
                     <span>
                       {submitting
@@ -789,6 +972,141 @@ const Diseases = () => {
             </div>
           </div>
         )}
+
+        {/* ══════════════════════════
+            VERIFY RESULT MODAL
+        ══════════════════════════ */}
+        {showVerifyModal && (
+          <div className="ver-overlay" onClick={() => !verifying && setShowVerifyModal(false)}>
+            <div className="ver-modal" onClick={e => e.stopPropagation()}>
+
+              {/* Header */}
+              <div className={`ver-header ${verifying ? 'loading' : verifyResult?.error ? 'unsafe' : verifyResult?.safe ? 'safe' : 'unsafe'}`}>
+                <div className="ver-header-icon">
+                  {verifying
+                    ? <div className="ver-spinner" />
+                    : verifyResult?.error
+                      ? <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      : verifyResult?.safe
+                        ? <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+                        : <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                  }
+                </div>
+                <div className="ver-header-title">
+                  {verifying
+                    ? 'Analysing medications…'
+                    : verifyResult?.error
+                      ? 'Verification failed'
+                      : verifyResult?.safe
+                        ? 'Medications look safe'
+                        : 'Potential issues found'
+                  }
+                </div>
+                <div className="ver-header-sub">
+                  {verifying
+                    ? 'Checking for drug interactions and safety…'
+                    : verifyResult?.error
+                      ? 'Could not complete the safety check.'
+                      : 'AI-powered medication safety analysis'
+                  }
+                </div>
+                {!verifying && (
+                  <button className="ver-close" onClick={() => setShowVerifyModal(false)}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                )}
+              </div>
+
+              {/* Body */}
+              <div className="ver-body">
+                {verifying && (
+                  <div className="ver-loading">
+                    <div className="ver-spinner" />
+                    <div className="ver-loading-text">Consulting AI for drug interaction analysis…</div>
+                  </div>
+                )}
+
+                {!verifying && verifyResult?.error && (
+                  <div className="ver-summary-box" style={{borderColor:'#f5c6c6',background:'rgba(192,57,43,0.05)',color:'#8a2020'}}>
+                    {verifyResult.error}
+                  </div>
+                )}
+
+                {!verifying && verifyResult && !verifyResult.error && (
+                  <>
+                    {/* Safe status badge */}
+                    <div>
+                      <span className={`ver-safe-badge ${verifyResult.safe ? 'safe' : 'unsafe'}`}>
+                        {verifyResult.safe
+                          ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+                          : <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        }
+                        {verifyResult.safe ? 'Combination is safe' : 'Combination may be unsafe'}
+                      </span>
+                    </div>
+
+                    {/* Summary */}
+                    {verifyResult.summary && (
+                      <div className="ver-summary-box">{verifyResult.summary}</div>
+                    )}
+
+                    {/* Interactions */}
+                    {verifyResult.interactions?.length > 0 && (
+                      <div>
+                        <div className="ver-section-title danger">Drug Interactions</div>
+                        <div className="ver-item-list">
+                          {verifyResult.interactions.map((item, i) => (
+                            <div key={i} className="ver-item danger">
+                              <div className="ver-item-dot" />
+                              {item}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Warnings */}
+                    {verifyResult.warnings?.length > 0 && (
+                      <div>
+                        <div className="ver-section-title">Warnings & Cautions</div>
+                        <div className="ver-item-list">
+                          {verifyResult.warnings.map((item, i) => (
+                            <div key={i} className="ver-item warn">
+                              <div className="ver-item-dot" />
+                              {item}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* All clear */}
+                    {verifyResult.safe && verifyResult.interactions?.length === 0 && verifyResult.warnings?.length === 0 && (
+                      <div className="ver-item-list">
+                        <div className="ver-item ok">
+                          <div className="ver-item-dot" />
+                          No known interactions or warnings found for this combination.
+                        </div>
+                      </div>
+                    )}
+
+                    <p style={{fontSize:'11px',color:'#9ab8a8',lineHeight:1.6,marginTop:'4px'}}>
+                      ⚠️ This is an AI-generated analysis for informational purposes only. Always consult your doctor or pharmacist before making any medication decisions.
+                    </p>
+                  </>
+                )}
+
+                {!verifying && (
+                  <button className="ver-done-btn" onClick={() => setShowVerifyModal(false)}>
+                    Done
+                  </button>
+                )}
+              </div>
+
+            </div>
+          </div>
+        )}
+
       </div>
     </>
   );

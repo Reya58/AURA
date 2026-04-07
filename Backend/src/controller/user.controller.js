@@ -1,4 +1,6 @@
 import Patient from '../models/user.model.js';
+import dotenv from "dotenv";
+dotenv.config();
 
 // Add a new disease to a patient
 export const addDisease = async (req, res) => {
@@ -159,3 +161,99 @@ export const Latest=async(req,res)=>{
     res.status(500).json({message:err.message});
   }
 }
+
+
+export const verifyMedications = async (req, res) => {
+  try {
+    // ✅ Correct env check
+    if (!process.env.GROQ_API_KEY) {
+      throw new Error("Missing GROQ API KEY");
+    }
+
+    const { medications } = req.body;
+
+    if (!medications || medications.length === 0) {
+      return res.status(400).json({ message: 'No medications provided' });
+    }
+
+    // ✅ Format medication list
+    const medList = medications
+      .map(
+        (m, i) =>
+          `${i + 1}. ${m.name} (${m.dose}) for ${m.disease}, duration: ${m.duration}`
+      )
+      .join('\n');
+
+    // ✅ Prompt
+    const prompt = `You are a medical safety assistant. A patient is currently taking the following medicationsOnly report interactions that are medically well-established.
+Ignore weak or uncertain associations.:
+
+${medList}
+
+Please analyze:
+1. Whether this combination of medications is safe.
+2. Any harmful drug interactions.
+3. Any dosage concerns.
+
+Respond ONLY in valid JSON:
+{
+ "severity": "high | medium | low",
+  "interactions": ["..."],
+  "warnings": ["..."],
+  "summary": "..."
+}`;
+
+    // ✅ API call (Groq)
+    const grokResponse = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: [{ role: "user", content: prompt }],
+          temperature: 0,
+        }),
+      }
+    );
+
+    // ✅ Handle API error
+    if (!grokResponse.ok) {
+      const errText = await grokResponse.text();
+      console.error("Groq API Error:", errText);
+
+      return res.status(502).json({
+        message: "Groq API error",
+        detail: errText,
+      });
+    }
+
+    const grokData = await grokResponse.json();
+    const rawContent = grokData.choices?.[0]?.message?.content ?? "";
+
+    // ✅ Clean response
+    const cleaned = rawContent.replace(/```json|```/g, "").trim();
+
+    // ✅ Safe JSON parsing
+    let analysis;
+    try {
+      analysis = JSON.parse(cleaned);
+    } catch {
+      analysis = {
+        safe: false,
+        interactions: [],
+        warnings: ["AI response parsing failed"],
+        summary: cleaned,
+      };
+    }
+
+    // ✅ Send response
+    res.status(200).json({ analysis });
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

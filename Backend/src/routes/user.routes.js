@@ -12,5 +12,5 @@ router.put('/update-reminder-status', authMiddleware, userCtrl.updateReminderSta
 router.put('/update', authMiddleware, userCtrl.updateProfile);
 router.put('/update-med-status', authMiddleware, userCtrl.updatemedications);
 router.get('/latest-health-data',authMiddleware,userCtrl.Latest);
-
+router.post('/verify', authMiddleware, userCtrl.verifyMedications);
 export default router;
